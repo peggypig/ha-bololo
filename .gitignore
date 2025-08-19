@@ -1,2 +1,4 @@
 .venv
 .idea
+test/__pycache__/
+custom_component/bololo/__pycache__/
