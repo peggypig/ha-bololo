@@ -3,7 +3,7 @@
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.typing import ConfigType
 import logging
-from custom_component.bololo.const import DOMAIN
+from custom_components.bololo.const import DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
