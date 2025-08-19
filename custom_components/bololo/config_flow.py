@@ -20,14 +20,14 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         # 显示表单
         return self.async_show_form(
-            step_id="user",
             data_schema=vol.Schema({
-                vol.Required("api_key"): str,
+                vol.Required("app_key"): str,
+                vol.Required("mobile"): str,
                 vol.Optional("scan_interval", default=60): int,
-                vol.Optional("options"): str
             }),
             description_placeholders={
-                "help_text": "请从供应商网站获取API密钥"
+                "app_key": "请使用抓包软件抓取app_key",
+                "mobile": "携带区号，例如+86"
             }
         )
 
@@ -50,7 +50,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             return self.async_create_entry(title="", data=user_input)
 
         return self.async_show_form(
-            step_id="init",
             data_schema=vol.Schema({
                 vol.Optional(
                     "scan_interval",
