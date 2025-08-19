@@ -1,0 +1,15 @@
+{
+  "domain": "ha-bololo",
+  "name": "Bololo Integration",
+  "documentation": "https://github.com/peggypig/ha-bololo",
+  "dependencies": [
+    "http"
+  ],
+  "codeowners": [
+    "@peggypig"
+  ],
+  "issue_tracker": "https://github.com/peggypig/ha-bololo/issues",
+  "requirements": [],
+  "version": "1.0.0",
+  "config_flow": true
+}

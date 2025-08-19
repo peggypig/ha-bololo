@@ -1,0 +1,1 @@
+### Bololo Integration for Home Assistant
