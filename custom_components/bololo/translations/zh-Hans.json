@@ -1,0 +1,56 @@
+{
+  "entity": {
+    "switch": {
+      "power": {
+        "name": "电源"
+      },
+      "anion": {
+        "name": "负离子"
+      },
+      "night_mode": {
+        "name": "夜间模式"
+      },
+      "storage_switch": {
+        "name": "保管"
+      }
+    }
+  },
+  "config": {
+    "flow_title": "Bololo集成",
+    "step": {
+      "user": {
+        "title": "用户信息配置",
+        "description": "请使用抓包工具抓取Bololo APP请求时携带的app_key参数 \n 手机号和Bololo APP中 我的->修改个人信息->手机 保持一致，如有+86",
+        "data": {
+          "mobile": "手机号",
+          "app_Key": "应用Key"
+        }
+      },
+      "verify_code": {
+        "title": "输入短信验证码",
+        "description": "短信验证码已发送到手机 {mobile}",
+        "data": {
+          "verify_code": "短信验证码"
+        }
+      }
+    },
+    "options": {
+      "step": {
+        "init": {
+          "title": "修改配置",
+          "description": "",
+          "data": {
+            "scan_interval": "扫描周期",
+            "device_list": "设备列表",
+            "home_list": "家庭列表",
+            "update_device_list": "更新设备列表"
+          }
+        }
+      }
+    },
+    "error": {
+      "request_verify_code_failed": "获取验证码失败",
+      "request_login_failed": "登录失败\n app_key : {app_key} \n mobile : {mobile}"
+    }
+  }
+}
