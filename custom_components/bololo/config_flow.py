@@ -6,15 +6,13 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import callback
-import homeassistant.helpers.config_validation as cv
 
-from custom_components.bololo.api import BololoApiClient
-from custom_components.bololo.const import (
+from .api_client import BololoApiClient
+from .const import (
     DOMAIN,
     FIELD_NAME_MOBILE,
     FIELD_NAME_APP_KEY,
-    FIELD_NAME_VERIFY_CODE,
-    FIELD_NAME_SCAN_INTERVAL, FIELD_NAME_TOKEN
+    FIELD_NAME_VERIFY_CODE, FIELD_NAME_TOKEN
 )
 
 _LOGGER = logging.getLogger(f"{__name__}.{__file__}")

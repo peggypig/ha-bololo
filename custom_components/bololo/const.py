@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from homeassistant.const import Platform
 
 DOMAIN: str = "bololo"
 
@@ -12,4 +11,3 @@ FIELD_NAME_TOKEN = "token"
 SERVICE_ADD_DEVICE = "add_device"
 SERVICE_REMOVE_DEVICE = "remove_device"
 SERVICE_REDISCOVER = "rediscover"
-

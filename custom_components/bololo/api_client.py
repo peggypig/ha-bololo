@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+bololo api 客户端
+"""
 import json
 from typing import Any
 

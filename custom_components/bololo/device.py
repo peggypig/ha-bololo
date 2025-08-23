@@ -1,55 +1,33 @@
+# -*- coding: utf-8 -*-
+"""
+设备
+"""
 import logging
-from enum import Enum, StrEnum
-from typing import Any, List
+from abc import abstractmethod, ABC
 
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import Platform
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers import device_registry as dr
-from homeassistant.helpers.entity import DeviceInfo, Entity
+from homeassistant.helpers.entity import  Entity
 
-from . import BololoApiClient
-from .const import DOMAIN
+from .api_client import BololoApiClient
+from .device_type import BololoDeviceType
 
 _LOGGER = logging.getLogger(f"{__name__}.{__file__}")
 
 
-class BololoDisinfectionCabinetSwitchFunction(Enum):
-    POWER = ("power", "switch", "mdi:power")
-    ANION = ("anion", "anion", "mdi:minus-circle-outline")
-    NIGHT_MODE = ("night_mode", "night_mode", "mdi:lightbulb-night")
-    STORAGE = ("storage", "storage_switch", "mdi:shield-check-outline")
 
-    def __init__(self, switch_function: str, switch_function_on_server: str, icon: str):
-        self._switch_function = switch_function
-        self._switch_function_on_server = switch_function_on_server
-        self._icon = icon
+class BololoDevice(ABC):
 
-    def get_switch_function(self):
-        return self._switch_function
+    def __init__(self, device_type: BololoDeviceType, bololo_api_client: BololoApiClient):
+        self._device_type = device_type
+        self._api_client = bololo_api_client
 
-    def get_switch_function_on_server(self):
-        return self._switch_function_on_server
+    @property
+    def api_client(self) -> BololoApiClient:
+        return self._api_client
 
-    def get_icon(self):
-        return self._icon
+    @property
+    def device_type(self):
+        return self._device_type
 
-
-class BololoDeviceType(Enum):
-    DISINFECTION_CABINET = ("k1mvpG70tNN000000000000000000000", [Platform.SWITCH])
-
-    def __init__(self, product_key: str, platforms: []):
-        if platforms is None:
-            platforms = []
-        self.product_key = product_key
-        self.platforms = platforms
-
-    def get_support_platforms(self):
-        return self.platforms
-
-
-def get_device_type_by_product_key(product_key: str):
-    for device_type in BololoDeviceType:
-        if device_type.product_key == product_key:
-            return device_type
-    return None
+    @abstractmethod
+    def get_entities(self) -> list[Entity]:
+        pass

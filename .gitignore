@@ -2,3 +2,5 @@
 .idea
 tests/__pycache__/
 custom_components/bololo/__pycache__/
+
+test_macos.sh

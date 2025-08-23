@@ -1,28 +1,23 @@
 # -*- coding: utf-8 -*-
-from _pydatetime import timedelta
 
 from homeassistant.components.http import StaticPathConfig
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.event import async_track_time_interval
-from homeassistant.helpers.typing import ConfigType
-import logging
 from custom_components.bololo.const import DOMAIN, FIELD_NAME_MOBILE
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
-import voluptuous as vol
 import logging
 
 from .const import DOMAIN, SERVICE_ADD_DEVICE, SERVICE_REMOVE_DEVICE, SERVICE_REDISCOVER
-from .api import BololoApiClient
-from .device import BololoDeviceType, get_device_type_by_product_key
+from .api_client import BololoApiClient
+from .device_type import BololoDeviceType, get_device_type_by_product_key
+from .disinfection_cabinet import BololoDisinfectionCabinet
 
 _LOGGER = logging.getLogger(f"{__name__}.{__file__}")
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
     """设置集成组件"""
-    _LOGGER.debug("call async_setup config: %s", config)
+    _LOGGER.debug("call async_setup , config: %s", config)
     hass.data.setdefault(DOMAIN, {})
 
     # 注册静态图标路径
@@ -37,15 +32,15 @@ async def async_setup(hass: HomeAssistant, config: dict):
         configs=[StaticPathConfig(f"/local/community/{DOMAIN}/icons", icons_path, False)]
     )
 
-    _LOGGER.debug("bololo icons path register : %s", icons_path)
+    _LOGGER.debug("call async_setup , bololo icons path register : %s", icons_path)
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     """设置配置条目"""
-    _LOGGER.debug("call async_setup_entry config_entry: %s , entry.data : %s", config_entry, config_entry.data)
+    _LOGGER.debug("call async_setup_entry , config_entry: %s , entry.data : %s", config_entry, config_entry.data)
     # 创建API客户端和设备管理器
-    api_client = BololoApiClient(hass, config_entry.data.get(FIELD_NAME_MOBILE))
+    bololo_api_client = BololoApiClient(hass, config_entry.data.get(FIELD_NAME_MOBILE))
 
     # 创建设备注册表条目
     device_registry = dr.async_get(hass)
@@ -55,30 +50,40 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
         config_entry.entry_id: []
     }
 
-    device_list = await api_client.list_device(
+    device_list = await bololo_api_client.list_device(
         config_entry.data.get("token").get("userToken")
     )
     platforms = []
+    bololo_devices = []
     for device_item in device_list:
-        device_type = get_device_type_by_product_key(device_item["productKey"])
-        if device_type is None or device_type.get_support_platforms() is None:
+        bololo_device_type = get_device_type_by_product_key(device_item["productKey"])
+        if bololo_device_type is None or bololo_device_type.platforms is None:
+            _LOGGER.debug("call async_setup_entry , but device_type : %s for %s", bololo_device_type,
+                          device_item["productKey"])
             continue
-        platforms.extend(device_type.get_support_platforms())
-        # 创建设备
-        device_entry = device_registry.async_get_or_create(
-            config_entry_id=config_entry.entry_id,
-            identifiers={(DOMAIN, device_item.get('did'))},
-            name=device_item.get('name'),
-            manufacturer=device_item.get('manufacturer', 'Bololo'),
-            model=device_item.get('model', 'DisinfectionCabinet'),
-            sw_version=device_item.get('firmware_version', 'UnknownSW'),
-            hw_version=device_item.get('hardware_version', 'UnknownHW'),
-        )
+        platforms.extend(bololo_device_type.platforms)
+        if bololo_device_type == BololoDeviceType.DISINFECTION_CABINET:
+            # 创建设备
+            bololo_device = BololoDisinfectionCabinet(
+                device_info_from_server=device_item,
+                hass=hass,
+                config_entry=config_entry,
+            )
+            device_entry = device_registry.async_get_or_create(
+                config_entry_id=config_entry.entry_id,
+                identifiers={(DOMAIN, device_item.get('did'))},
+                name=device_item.get('name'),
+                manufacturer=device_item.get('manufacturer', 'Bololo'),
+                model=device_item.get('model', bololo_device_type.DISINFECTION_CABINET.name),
+                sw_version=device_item.get('firmware_version', 'UnknownSW'),
+                hw_version=device_item.get('hardware_version', 'UnknownHW'),
+            )
+            bololo_device.device_entry = device_entry
+            bololo_devices.append(bololo_device)
 
-    hass.data[DOMAIN]['devices'][config_entry.entry_id] = device_list
-    # _LOGGER.debug("hass.data[DOMAIN][config_entry.entry_id] : %s ", hass.data[DOMAIN][config_entry.entry_id])
+    hass.data[DOMAIN]['devices'][config_entry.entry_id] = bololo_devices
     # 设置平台
-    _LOGGER.debug("entry setup platforms: %s", platforms)
+    _LOGGER.debug("call async_setup_entry , entry setup platforms: %s", platforms)
     await hass.config_entries.async_forward_entry_setups(config_entry, platforms)
     return True
 

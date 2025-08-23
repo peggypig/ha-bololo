@@ -14,5 +14,5 @@
   "config_flow": true,
   "integration_type": "hub",
   "iot_class": "cloud_polling",
-  "icon": "https://raw.githubusercontent.com/peggypig/ha-bololo/main/icon.png"
+  "icon": "https://raw.githubusercontent.com/peggypig/ha-bololo/master/icon.png"
 }
