@@ -3,6 +3,8 @@
 消毒柜
 """
 from __future__ import annotations
+
+import asyncio
 from typing import Any
 import logging
 import time
@@ -96,6 +98,7 @@ class BololoDisinfectionCabinet(BololoDevice):
                 "cluster_mqtt_port": device_info_from_server.get("mqttInfo").get("clusterMqttPort"),
             }
         self._device_status_request_timestamp_ms = None
+        self._device_status_request_lock = asyncio.Lock()
         self._device_status = None
         self._entities = []
         self._device_info = DeviceInfo(
@@ -131,37 +134,39 @@ class BololoDisinfectionCabinet(BololoDevice):
         """
         Return the device status
         """
-        _LOGGER.debug("call device_status")
-        if self._device_status is None:
-            _LOGGER.debug(
-                "call device_status , request device status from server , because device status is None")
-            self._device_status = BololoDisinfectionCabinetStatus(
-                await self._api_client.get_device_status(
-                    auth_token=self._config_entry.data.get("token").get("userToken"),
-                    product_key=self._product_key,
-                    mac=self._mac
+        _LOGGER.debug("call device_status , wait lock")
+        async with self._device_status_request_lock:
+            _LOGGER.debug("call device_status , got lock")
+            if self._device_status is None:
+                _LOGGER.debug(
+                    "call device_status , request device status from server , because device status is None")
+                self._device_status = BololoDisinfectionCabinetStatus(
+                    await self._api_client.get_device_status(
+                        auth_token=self._config_entry.data.get("token").get("userToken"),
+                        product_key=self._product_key,
+                        mac=self._mac
+                    )
                 )
-            )
-            self._device_status_request_timestamp_ms = int(round(time.time() * 1000))
-            return self._device_status
+                self._device_status_request_timestamp_ms = int(round(time.time() * 1000))
+                return self._device_status
 
-        current_timestamp_ms = int(round(time.time() * 1000))
-        if current_timestamp_ms - self._device_status_request_timestamp_ms > 30 * 1000:
-            _LOGGER.debug(
-                "call device_status , request device status from server , because device status is older than 30s"
-            )
-            self._device_status = BololoDisinfectionCabinetStatus(
-                await self._api_client.get_device_status(
-                    auth_token=self._config_entry.data.get("token").get("userToken"),
-                    product_key=self._product_key,
-                    mac=self._mac
+            current_timestamp_ms = int(round(time.time() * 1000))
+            if current_timestamp_ms - self._device_status_request_timestamp_ms > 10 * 1000:
+                _LOGGER.debug(
+                    "call device_status , request device status from server , because device status is older than 10s"
                 )
-            )
-            self._device_status_request_timestamp_ms = int(round(time.time() * 1000))
-            return self._device_status
+                self._device_status = BololoDisinfectionCabinetStatus(
+                    await self._api_client.get_device_status(
+                        auth_token=self._config_entry.data.get("token").get("userToken"),
+                        product_key=self._product_key,
+                        mac=self._mac
+                    )
+                )
+                self._device_status_request_timestamp_ms = int(round(time.time() * 1000))
+                return self._device_status
 
-        _LOGGER.debug("call device_status , use cached device status")
-        return self._device_status
+            _LOGGER.debug("call device_status , use cached device status")
+            return self._device_status
 
     @property
     def device_info(self) -> DeviceInfo:
