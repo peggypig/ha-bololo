@@ -6,6 +6,9 @@ from enum import Enum
 
 
 class BololoDisinfectionCabinetSwitchFunction(Enum):
+    """
+    消毒柜开关功能
+    """
     POWER = ("power", "switch", "mdi:power")
     ANION = ("anion", "anion", "mdi:minus-circle-outline")
     NIGHT_MODE = ("night_mode", "night_mode", "mdi:lightbulb-night")

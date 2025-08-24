@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+常量
+"""
 
 DOMAIN: str = "bololo"
 

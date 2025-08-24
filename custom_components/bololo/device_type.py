@@ -8,6 +8,9 @@ from homeassistant.const import Platform
 
 
 class BololoDeviceType(Enum):
+    """
+    设备类型
+    """
     DISINFECTION_CABINET = ("k1mvpG70tNN000000000000000000000", [Platform.SWITCH])
 
     def __init__(self, product_key: str, platforms):

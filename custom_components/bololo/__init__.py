@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
+"""
+插件入口
+"""
+import logging
+import os
 
 from homeassistant.components.http import StaticPathConfig
-from custom_components.bololo.const import DOMAIN, FIELD_NAME_MOBILE
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import device_registry as dr
-import logging
 
-from .const import DOMAIN, SERVICE_ADD_DEVICE, SERVICE_REMOVE_DEVICE, SERVICE_REDISCOVER
+from .const import DOMAIN, SERVICE_ADD_DEVICE, SERVICE_REMOVE_DEVICE, SERVICE_REDISCOVER, FIELD_NAME_MOBILE
 from .api_client import BololoApiClient
 from .device_type import BololoDeviceType, get_device_type_by_product_key
 from .disinfection_cabinet import BololoDisinfectionCabinet
 
-_LOGGER = logging.getLogger(f"{__name__}.{__file__}")
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass: HomeAssistant, config: dict):
@@ -24,7 +27,6 @@ async def async_setup(hass: HomeAssistant, config: dict):
     icons_path = hass.config.path("custom_components", DOMAIN, "www", "icons")
 
     # 检查图标目录是否存在，如果不存在则创建
-    import os
     os.makedirs(icons_path, exist_ok=True)
 
     # 注册静态文件服务
@@ -87,7 +89,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     await hass.config_entries.async_forward_entry_setups(config_entry, platforms)
     return True
 
-
+#pylint: disable=unused-argument
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     # 如果需要卸载平台，取消注释下面这行

@@ -16,7 +16,7 @@ from .const import (DOMAIN)
 # pylint: disable=line-too-long
 from .disinfection_cabinet_switch_function import BololoDisinfectionCabinetSwitchFunction
 
-_LOGGER = logging.getLogger(f"{__name__}.{__file__}")
+_LOGGER = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from . import BololoDisinfectionCabinet
@@ -87,6 +87,9 @@ class DisinfectionCabinetSwitch(SwitchEntity):
         return self._attr_is_on
 
     async def async_update(self):
+        """
+        更新设备信息（基础信息/状态信息），由hass调用
+        """
         device_status = await self._disinfection_cabinet.device_status
         _LOGGER.debug("call async_update ,switch function %s , device_status : %s", self._switch_function,
                       device_status.__dict__)
@@ -99,12 +102,26 @@ class DisinfectionCabinetSwitch(SwitchEntity):
         self._attr_is_on = is_on
 
     async def async_turn_on(self, **kwargs: Any) -> None:
+        """Turn the entity on."""
         await self._disinfection_cabinet.async_control_switch(
             self._switch_function.switch_function_on_server, True
         )
         self._attr_is_on = True
 
+    def turn_on(self, **kwargs: Any) -> None:
+        """Turn the entity on."""
+        self._disinfection_cabinet.async_control_switch(
+            self._switch_function.switch_function_on_server, True
+        )
+
+    def turn_off(self, **kwargs: Any) -> None:
+        """Turn the entity off."""
+        self._disinfection_cabinet.async_control_switch(
+            self._switch_function.switch_function_on_server, False
+        )
+
     async def async_turn_off(self, **kwargs: Any) -> None:
+        """Turn the entity off."""
         await self._disinfection_cabinet.async_control_switch(
             self._switch_function.switch_function_on_server, False
         )

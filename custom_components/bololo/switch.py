@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+开关设备设置
+"""
 import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -7,7 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 from .device import  BololoDevice
 
-_LOGGER = logging.getLogger(f"{__name__}.{__file__}")
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -27,6 +30,3 @@ async def async_setup_entry(
 
     if new_entities:
         async_add_entities(new_entities)
-
-
-

@@ -5,7 +5,6 @@
 from __future__ import annotations
 from typing import Any
 import logging
-import threading
 import time
 
 from homeassistant.config_entries import ConfigEntry
@@ -22,7 +21,7 @@ from .disinfection_cabinet_status import BololoDisinfectionCabinetStatus
 from .disinfection_cabinet_switch import DisinfectionCabinetSwitch
 from .disinfection_cabinet_switch_function import BololoDisinfectionCabinetSwitchFunction
 
-_LOGGER = logging.getLogger(f"{__name__}.{__file__}")
+_LOGGER = logging.getLogger(__name__)
 
 
 class BololoDisinfectionCabinet(BololoDevice):
