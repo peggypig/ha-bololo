@@ -13,6 +13,7 @@ class BololoDisinfectionCabinetSwitchFunction(Enum):
     ANION = ("anion", "anion", "mdi:minus-circle-outline")
     NIGHT_MODE = ("night_mode", "night_mode", "mdi:lightbulb-night")
     STORAGE = ("storage", "storage_switch", "mdi:shield-check-outline")
+    DISINFECTION = ("disinfection", "disinfection_switch", "mdi:disinfection_switch_off")
 
     def __init__(self, switch_function: str, switch_function_on_server: str, icon: str):
         self._switch_function = switch_function

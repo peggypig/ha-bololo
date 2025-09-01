@@ -89,7 +89,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     await hass.config_entries.async_forward_entry_setups(config_entry, platforms)
     return True
 
-#pylint: disable=unused-argument
+# pylint: disable=unused-argument
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     # 如果需要卸载平台，取消注释下面这行

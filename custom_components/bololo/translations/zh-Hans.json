@@ -10,8 +10,11 @@
       "night_mode": {
         "name": "夜间模式"
       },
-      "storage_switch": {
+      "storage": {
         "name": "保管"
+      },
+      "disinfection": {
+        "name": "消毒"
       }
     }
   },
