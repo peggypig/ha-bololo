@@ -15,6 +15,12 @@
       },
       "disinfection": {
         "name": "消毒"
+      },
+      "dry": {
+        "name": "烘干"
+      },
+      "auto": {
+        "name": "自动"
       }
     }
   },
