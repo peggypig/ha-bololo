@@ -10,6 +10,7 @@ import logging
 import time
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo, DeviceEntry
 from homeassistant.helpers.entity import Entity
@@ -18,10 +19,12 @@ from .const import (DOMAIN)
 from .api_client import BololoApiClient
 # pylint: disable=line-too-long
 from .device import BololoDevice, BololoDeviceType
+from .disinfection_cabinet_button import DisinfectionCabinetButton
+from .disinfection_cabinet_function import BololoDisinfectionCabinetFunction
+from .disinfection_cabinet_select import DisinfectionCabinetSelect
 
 from .disinfection_cabinet_status import BololoDisinfectionCabinetStatus
 from .disinfection_cabinet_switch import DisinfectionCabinetSwitch
-from .disinfection_cabinet_switch_function import BololoDisinfectionCabinetSwitchFunction
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -110,10 +113,20 @@ class BololoDisinfectionCabinet(BololoDevice):
             configuration_url=None,
             serial_number=self._sno,
         )
-        for function in BololoDisinfectionCabinetSwitchFunction:
-            disinfection_cabinet_switch = DisinfectionCabinetSwitch(config_entry, function)
-            disinfection_cabinet_switch.set_disinfection_cabinet(self)
-            self._entities.append(disinfection_cabinet_switch)
+        for function in BololoDisinfectionCabinetFunction:
+            if function.platform == Platform.SWITCH:
+                disinfection_cabinet_switch = DisinfectionCabinetSwitch(config_entry, function)
+                disinfection_cabinet_switch.set_disinfection_cabinet(self)
+                self._entities.append(disinfection_cabinet_switch)
+            elif function.platform == Platform.BUTTON:
+                disinfection_cabinet_button = DisinfectionCabinetButton(config_entry, function)
+                disinfection_cabinet_button.set_disinfection_cabinet(self)
+                self._entities.append(disinfection_cabinet_button)
+            elif function.platform == Platform.SELECT:
+                disinfection_cabinet_select = DisinfectionCabinetSelect(config_entry, function)
+                disinfection_cabinet_select.set_disinfection_cabinet(self)
+                self._entities.append(disinfection_cabinet_select)
+
 
     @property
     def device_entry(self):

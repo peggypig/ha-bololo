@@ -22,6 +22,14 @@
       "auto": {
         "name": "自动"
       }
+    },
+    "select": {
+      "disinfection_time": {
+        "name": "消毒时长（分钟）"
+      },
+      "auto_time": {
+        "name": "自动时长（分钟）"
+      }
     }
   },
   "config": {

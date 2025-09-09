@@ -11,7 +11,7 @@ class BololoDeviceType(Enum):
     """
     设备类型
     """
-    DISINFECTION_CABINET = ("k1mvpG70tNN000000000000000000000", [Platform.SWITCH])
+    DISINFECTION_CABINET = ("k1mvpG70tNN000000000000000000000", [Platform.SWITCH,Platform.BUTTON,Platform.SELECT])
 
     def __init__(self, product_key: str, platforms):
         if platforms is None:
